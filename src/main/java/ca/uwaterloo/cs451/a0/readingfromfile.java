@@ -8,7 +8,7 @@ public class readingfromfile
     FileReader fr = 
       new FileReader("wc/part-r-00000"); 
   
-    int i; 
+    int i
     while ((i=fr.read()) != -1) 
       System.out.print((char) i); 
   } 
