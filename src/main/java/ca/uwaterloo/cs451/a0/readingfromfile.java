@@ -1,5 +1,5 @@
 import java.io.*; 
-public class ReadingFromFile 
+public class readingfromfile 
 { 
   public static void main(String[] args) throws Exception 
   { 
