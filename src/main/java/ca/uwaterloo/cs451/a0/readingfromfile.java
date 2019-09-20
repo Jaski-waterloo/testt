@@ -6,7 +6,7 @@ public class readingfromfile
   { 
     // pass the path to the file as a parameter 
     FileReader fr = 
-      new FileReader("wc/part-r-00000"); 
+      new FileReader("fudge.txt"); 
   
     int i;
     while ((i=fr.read()) != -1) 
