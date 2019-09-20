@@ -165,7 +165,7 @@ public class WordCount extends Configured implements Tool {
 
     job.setNumReduceTasks(args.numReducers);
 
-    FileInputFormat.setInputPaths(job, new Path(args.input));
+    FileInputFormat.setInputPaths(job, new Path("data/Shakespeare");
     FileOutputFormat.setOutputPath(job, new Path(args.output));
 
     job.setMapOutputKeyClass(Text.class);
