@@ -24,6 +24,6 @@ public class MyCounts
 		   return("No");
 	   }
      public static void main(String[] Args) throws Exception{
-     System.out.println(Integer.parseInt(giveCount("a")));
+     System.out.println(Integer.parseInt(giveCount("achilles")));
      }
 }
