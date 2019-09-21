@@ -9,7 +9,7 @@ public class MyCounts
 	public static String giveCount(String word) throws Exception
 	  {
 		  
-			  File file = new File("temp/part-r-00000");
+			  File file = new File("wc/part-r-00000");
 			  Scanner sc = new Scanner(file);
 		  while (sc.hasNextLine())
                 {
