@@ -1,4 +1,10 @@
-public static final class MyCounts
+import java.io.File;
+import java.util.Scanner;
+import java.lang.Math;
+
+import java.io.*
+
+public static class MyCounts
 {
 	public static String giveCount(String word) throws Exception
 	  {
@@ -18,6 +24,6 @@ public static final class MyCounts
 		   return("No");
 	   }
      public static void main(String[] Args) throws Exception{
-     giveCount("a");
+     System.out.println(Integer.parseInt(giveCount("a")));
      }
 }
