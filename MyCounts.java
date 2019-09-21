@@ -4,7 +4,7 @@ import java.lang.Math;
 
 import java.io.*;
 
-public static class MyCounts
+public class MyCounts
 {
 	public static String giveCount(String word) throws Exception
 	  {
