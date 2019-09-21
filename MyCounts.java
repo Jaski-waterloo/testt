@@ -2,7 +2,7 @@ import java.io.File;
 import java.util.Scanner;
 import java.lang.Math;
 
-import java.io.*
+import java.io.*;
 
 public static class MyCounts
 {
