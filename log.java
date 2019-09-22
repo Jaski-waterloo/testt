@@ -2,10 +2,10 @@ import java.io.*;
 import java.lang.Math;
 public class log
 {
-public double calcLog(double num)
+public static double calcLog(double num)
 {
-log = Math.log(num)/Math.log(10);
-return(log);
+num = Math.log(num)/Math.log(10);
+return(num);
 }
 
 public static void main(String[] args) throws Exception
