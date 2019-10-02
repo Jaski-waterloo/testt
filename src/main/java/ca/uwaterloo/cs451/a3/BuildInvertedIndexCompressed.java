@@ -100,7 +100,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
     }
   }
 
-  private BuildInvertedIndex() {}
+  private BuildInvertedIndexCompressed() {}
 
   private static final class Args {
     @Option(name = "-input", metaVar = "[path]", required = true, usage = "input path")
