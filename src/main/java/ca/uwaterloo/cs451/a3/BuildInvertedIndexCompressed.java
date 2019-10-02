@@ -90,7 +90,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 
       int df = 0;
       while (iter1.hasNext() && iter2.hasNext()) {
-        postings.add(new PairOfInts(iter1.next().clone().getRightElement(), iter2.next().clone()));
+        postings.add(new PairOfInts((int) iter1.next().clone().getRightElement(), (int) iter2.next().clone()));
         df++;
       }
 
@@ -98,7 +98,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 //       Collections.sort(postings);
 
       DF.set(df);
-      context.write(new Text(iter1.clone().getLeftElement()), new PairOfWritables<>(DF, postings));
+      context.write(new Text(iter1.getLeftElement()), new PairOfWritables<>(DF, postings));
     }
   }
 
