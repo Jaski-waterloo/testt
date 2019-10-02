@@ -54,8 +54,8 @@ import java.util.List;
 public class BuildInvertedIndexCompressed extends Configured implements Tool {
   private static final Logger LOG = Logger.getLogger(BuildInvertedIndexCompressed.class);
 
-  private static final class MyMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
-    private static final Text WORD = new Text();
+  private static final class MyMapper extends Mapper<LongWritable, Text, PairOfStringInt, IntWritable> {
+    private static final PairOfStringInt WORD = new PairOfStringInt();
     private static final Object2IntFrequencyDistribution<String> COUNTS =
         new Object2IntFrequencyDistributionEntry<>();
 
@@ -72,15 +72,16 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 
       // Emit postings.
       for (PairOfObjectInt<String> e : COUNTS) {
-        String temp = e.getLeftElement() + " " + (int) docno.get();
-        WORD.set(temp);
+//         String temp = e.getLeftElement() + " " + (int) docno.get();
+//         WORD.set(temp);
+        WORD.set(e.getLeftElement(), (int) docno.get())
         context.write(WORD, new IntWritable(e.getRightElement()));
       }
     }
   }
 
   private static final class MyReducer extends
-      Reducer<Text, IntWritable, Text, PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>>> {
+      Reducer<PairOfStringInt, IntWritable, Text, PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>>> {
     private static final IntWritable DF = new IntWritable();
     private static final String prev = "";
     private static final ArrayListWritable<PairOfInts> postings = new ArrayListWritable<>();
@@ -90,8 +91,10 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
     public void reduce(Text key, Iterable<IntWritable> values, Context context)
         throws IOException, InterruptedException {
       Iterator<IntWritable> iter2 = values.iterator();
-      String keyTerm = key.toString().split(" ")[0];
-      int docTerm = Integer.parseInt(key.toString().split(" ")[1]);
+//       String keyTerm = key.toString().split(" ")[0];
+//       int docTerm = Integer.parseInt(key.toString().split(" ")[1]);
+      String keyTerm = key.getLeftElement();
+      String docTerm = key.getRightElement();
       if(!keyTerm.equals(prev) && !prev.equals(""))
       {
         DF.set(df);
@@ -103,6 +106,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
         postings.add(new PairOfInts(docTerm, (int) iter2.next().get()));
         df++;
       }
+      prev = keyTerm;
 
       // Sort the postings by docno ascending.
 //       Collections.sort(postings);
