@@ -53,7 +53,7 @@ import java.util.List;
 public class BuildInvertedIndexCompressed extends Configured implements Tool {
   private static final Logger LOG = Logger.getLogger(BuildInvertedIndexCompressed.class);
 
-  private static final class MyMapper extends Mapper<LongWritable, Text, PairOfStringInt, IntWritable> {
+  private static final class MyMapper extends Mapper<LongWritable, Text, PairOfStringInt, Int> {
     private static final PairOfStringInt WORD = new PairOfStringInt();
     private static final Object2IntFrequencyDistribution<String> COUNTS =
         new Object2IntFrequencyDistributionEntry<>();
@@ -72,7 +72,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
       // Emit postings.
       for (PairOfObjectInt<String> e : COUNTS) {
         WORD.set(e.getLeftElement(),(int) docno.get());
-        context.write(WORD, e.getRightElement());
+        context.write(WORD, new IntWritable(e.getRightElement()));
       }
     }
   }
@@ -82,7 +82,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
     private static final IntWritable DF = new IntWritable();
 
     @Override
-    public void reduce(PairOfStringInt key, Iterable<PairOfInts> values, Context context)
+    public void reduce(Iterable<PairOfStringInt> key, Iterable<IntWritable> values, Context context)
         throws IOException, InterruptedException {
       Iterator<IntWritable> iter2 = values.iterator();
       Iterator<PairOfStringInt> iter1 = key.iterator();
@@ -98,7 +98,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 //       Collections.sort(postings);
 
       DF.set(df);
-      context.write(key, new PairOfWritables<>(DF, postings));
+      context.write(new Text(key.getLeftElement()), new PairOfWritables<>(DF, postings));
     }
   }
 
@@ -141,8 +141,8 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
     FileInputFormat.setInputPaths(job, new Path(args.input));
     FileOutputFormat.setOutputPath(job, new Path(args.output));
 
-    job.setMapOutputKeyClass(Text.class);
-    job.setMapOutputValueClass(PairOfInts.class);
+    job.setMapOutputKeyClass(PairOfStringInt.class);
+    job.setMapOutputValueClass(IntWritable.class);
     job.setOutputKeyClass(Text.class);
     job.setOutputValueClass(PairOfWritables.class);
     job.setOutputFormatClass(MapFileOutputFormat.class);
