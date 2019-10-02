@@ -95,7 +95,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
       if(!keyTerm.equals(prev) && !prev.equals(""))
       {
         DF.set(df);
-        context.write(key, new PairOfWritables<>(DF, postings));
+        context.write(new Text(keyTerm), new PairOfWritables<>(DF, postings));
         df = 0;
         postings.clear();
       }
