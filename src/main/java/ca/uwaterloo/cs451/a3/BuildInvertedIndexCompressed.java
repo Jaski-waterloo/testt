@@ -50,7 +50,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class BuildInvertedIndexCompressed extends Configured implements Tool {
-  private static final Logger LOG = Logger.getLogger(BuildInvertedIndex.class);
+  private static final Logger LOG = Logger.getLogger(BuildInvertedIndexCompressed.class);
 
   private static final class MyMapper extends Mapper<LongWritable, Text, Text, PairOfInts> {
     private static final Text WORD = new Text();
