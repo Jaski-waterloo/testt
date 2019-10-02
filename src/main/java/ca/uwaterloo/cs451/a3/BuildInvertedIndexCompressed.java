@@ -91,7 +91,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
       int df = 0;
       PairOfStringInt temp = new PairOfStringint();
       while (iter1.hasNext() && iter2.hasNext()) {
-        temp = iter1.next().clone()
+        temp = iter1.next().clone();
         postings.add(new PairOfInts((int) temp.getRightElement(), (int) iter2.next().clone()));
         df++;
       }
