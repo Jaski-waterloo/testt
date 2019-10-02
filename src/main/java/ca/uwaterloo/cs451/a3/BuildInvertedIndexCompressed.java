@@ -54,7 +54,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
   private static final Logger LOG = Logger.getLogger(BuildInvertedIndexCompressed.class);
 
   private static final class MyMapper extends Mapper<LongWritable, Text, PairOfStringInt, IntWritable> {
-    private static final PairOfStringInt WORD = new PairOfStringInt();
+    private static final Text WORD = new Text();
     private static final Object2IntFrequencyDistribution<String> COUNTS =
         new Object2IntFrequencyDistributionEntry<>();
 
@@ -71,7 +71,8 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 
       // Emit postings.
       for (PairOfObjectInt<String> e : COUNTS) {
-        WORD.set(e.getLeftElement(),(int) docno.get());
+        String temp = e.getLeftElement + " " + (int) docno.get();
+        WORD.set(temp);
         context.write(WORD, new IntWritable(e.getRightElement()));
       }
     }
@@ -80,27 +81,39 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
   private static final class MyReducer extends
       Reducer<PairOfStringInt, IntWritable, Text, PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>>> {
     private static final IntWritable DF = new IntWritable();
+    private static final String prev = ""
+    private static final ArrayListWritable<PairOfInts> postings = new ArrayListWritable<>();
+    private static final Int df = 0;
 
-//     @Override
-    public void reduce(Iterable<PairOfStringInt> key, Iterable<IntWritable> values, Context context)
+    @Override
+    public void reduce(Text key, Iterable<IntWritable> values, Context context)
         throws IOException, InterruptedException {
       Iterator<IntWritable> iter2 = values.iterator();
-      Iterator<PairOfStringInt> iter1 = key.iterator();
-      ArrayListWritable<PairOfInts> postings = new ArrayListWritable<>();
-
-      int df = 0;
-      PairOfStringInt temp = new PairOfStringInt();
-      while (iter1.hasNext() && iter2.hasNext()) {
-        temp = iter1.next();
-        postings.add(new PairOfInts((int) temp.getRightElement(), (int) iter2.next().get()));
+      String keyTerm = key.get().split(" ")[0];
+      String docTerm = key.get().split(" ")[1];
+      if(!keyTerm.equals(prev) && prev != "")
+      {
+        DF.set(df)
+        context.write(key, new PairOfWritables<>(DF, postings));
+        df = 0;
+        postings.clear();
+      }
+      while (iter2.hasNext()) {
+        postings.add(new PairOfInts((int) docTerm, (int) iter2.next().get()));
         df++;
       }
 
       // Sort the postings by docno ascending.
 //       Collections.sort(postings);
 
-      DF.set(df);
-      context.write(new Text(temp.getLeftElement()), new PairOfWritables<>(DF, postings));
+//       DF.set(df);
+//       context.write(new Text(newKey), new PairOfWritables<>(DF, postings));
+    }
+    @Override
+    publid void cleanup()
+    {
+      DF.set(df)
+      context.write(new Text(prev), new PairOfWritables<>(DF, postings))
     }
   }
 
