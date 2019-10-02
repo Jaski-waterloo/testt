@@ -89,8 +89,8 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
     public void reduce(Text key, Iterable<IntWritable> values, Context context)
         throws IOException, InterruptedException {
       Iterator<IntWritable> iter2 = values.iterator();
-      String keyTerm = key.getValue().split(" ")[0];
-      int docTerm = Integer.parseInt(key.getValue().split(" ")[1]);
+      String keyTerm = key.toString().split(" ")[0];
+      int docTerm = Integer.parseInt(key.toString().split(" ")[1]);
       if(!keyTerm.equals(prev) && prev != "")
       {
         DF.set(df);
