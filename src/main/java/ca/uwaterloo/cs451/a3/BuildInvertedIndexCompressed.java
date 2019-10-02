@@ -53,7 +53,7 @@ import java.util.List;
 public class BuildInvertedIndexCompressed extends Configured implements Tool {
   private static final Logger LOG = Logger.getLogger(BuildInvertedIndexCompressed.class);
 
-  private static final class MyMapper extends Mapper<LongWritable, Text, PairOfStringInt, Int> {
+  private static final class MyMapper extends Mapper<LongWritable, Text, PairOfStringInt, IntWritable> {
     private static final PairOfStringInt WORD = new PairOfStringInt();
     private static final Object2IntFrequencyDistribution<String> COUNTS =
         new Object2IntFrequencyDistributionEntry<>();
@@ -90,7 +90,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 
       int df = 0;
       while (iter1.hasNext() && iter2.hasNext()) {
-        postings.add(new PairOfInts(iter1.next().getRightElement.clone(), iter2.next().clone()));
+        postings.add(new PairOfInts(iter1.next().clone().getRightElement(), iter2.next().clone()));
         df++;
       }
 
@@ -98,7 +98,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 //       Collections.sort(postings);
 
       DF.set(df);
-      context.write(new Text(key.getLeftElement()), new PairOfWritables<>(DF, postings));
+      context.write(new Text(iter1.clone().getLeftElement()), new PairOfWritables<>(DF, postings));
     }
   }
 
