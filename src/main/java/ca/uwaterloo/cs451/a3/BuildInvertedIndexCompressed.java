@@ -92,7 +92,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
       Iterator<IntWritable> iter2 = values.iterator();
       String keyTerm = key.toString().split(" ")[0];
       int docTerm = Integer.parseInt(key.toString().split(" ")[1]);
-      if(!keyTerm.equals(prev) && prev != "")
+      if(!keyTerm.equals(prev) && !prev.equals(""))
       {
         DF.set(df);
         context.write(key, new PairOfWritables<>(DF, postings));
