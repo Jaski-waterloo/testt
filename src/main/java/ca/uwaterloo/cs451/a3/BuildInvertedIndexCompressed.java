@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-ca.uwaterloo.cs451.a3
+package ca.uwaterloo.cs451.a3;
 
 
 import io.bespin.java.util.Tokenizer;
