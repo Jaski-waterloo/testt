@@ -94,7 +94,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 //       String keyTerm = key.toString().split(" ")[0];
 //       int docTerm = Integer.parseInt(key.toString().split(" ")[1]);
       String keyTerm = key.getLeftElement();
-      String docTerm = key.getRightElement();
+      int docTerm = key.getRightElement();
       if(!keyTerm.equals(prev) && !prev.equals(""))
       {
         DF.set(df);
