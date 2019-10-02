@@ -81,7 +81,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
   private static final class MyReducer extends
       Reducer<Text, IntWritable, Text, PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>>> {
     private static final IntWritable DF = new IntWritable();
-    private static final String prev = ""
+    private static final String prev = "";
     private static final ArrayListWritable<PairOfInts> postings = new ArrayListWritable<>();
     private static final Int df = 0;
 
@@ -93,7 +93,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
       String docTerm = key.get().split(" ")[1];
       if(!keyTerm.equals(prev) && prev != "")
       {
-        DF.set(df)
+        DF.set(df);
         context.write(key, new PairOfWritables<>(DF, postings));
         df = 0;
         postings.clear();
