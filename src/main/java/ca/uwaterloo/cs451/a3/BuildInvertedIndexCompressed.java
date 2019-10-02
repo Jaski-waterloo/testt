@@ -81,7 +81,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
       Reducer<PairOfStringInt, IntWritable, Text, PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>>> {
     private static final IntWritable DF = new IntWritable();
 
-    @Override
+//     @Override
     public void reduce(Iterable<PairOfStringInt> key, Iterable<IntWritable> values, Context context)
         throws IOException, InterruptedException {
       Iterator<IntWritable> iter2 = values.iterator();
@@ -89,9 +89,9 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
       ArrayListWritable<PairOfInts> postings = new ArrayListWritable<>();
 
       int df = 0;
-      PairOfStringInt temp = new PairOfStringint();
+      PairOfStringInt temp = new PairOfStringInt();
       while (iter1.hasNext() && iter2.hasNext()) {
-        temp = iter1.next().clone();
+        temp = iter1.next();
         postings.add(new PairOfInts((int) temp.getRightElement(), (int) iter2.next().clone()));
         df++;
       }
