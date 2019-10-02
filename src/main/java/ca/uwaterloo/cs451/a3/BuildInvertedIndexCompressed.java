@@ -83,12 +83,12 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
   private static final class MyReducer extends
       Reducer<PairOfStringInt, IntWritable, Text, PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>>> {
     private static final IntWritable DF = new IntWritable();
-    private static final String prev = "";
+    private static String prev = "";
     private static final ArrayListWritable<PairOfInts> postings = new ArrayListWritable<>();
     private static int df = 0;
 
     @Override
-    public void reduce(Text key, Iterable<IntWritable> values, Context context)
+    public void reduce(PairOfStringInt key, Iterable<IntWritable> values, Context context)
         throws IOException, InterruptedException {
       Iterator<IntWritable> iter2 = values.iterator();
 //       String keyTerm = key.toString().split(" ")[0];
