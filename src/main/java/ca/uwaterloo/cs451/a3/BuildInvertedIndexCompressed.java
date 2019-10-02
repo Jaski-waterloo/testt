@@ -89,8 +89,10 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
       ArrayListWritable<PairOfInts> postings = new ArrayListWritable<>();
 
       int df = 0;
+      PairOfStringInt temp = new PairOfStringint();
       while (iter1.hasNext() && iter2.hasNext()) {
-        postings.add(new PairOfInts((int) iter1.next().clone().getRightElement(), (int) iter2.next().clone()));
+        temp = iter1.next().clone()
+        postings.add(new PairOfInts((int) temp.getRightElement(), (int) iter2.next().clone()));
         df++;
       }
 
@@ -98,7 +100,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 //       Collections.sort(postings);
 
       DF.set(df);
-      context.write(new Text(iter1.getLeftElement()), new PairOfWritables<>(DF, postings));
+      context.write(new Text(temp.getLeftElement()), new PairOfWritables<>(DF, postings));
     }
   }
 
