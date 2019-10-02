@@ -79,7 +79,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
   }
 
   private static final class MyReducer extends
-      Reducer<PairOfStringInt, IntWritable, Text, PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>>> {
+      Reducer<Text, IntWritable, Text, PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>>> {
     private static final IntWritable DF = new IntWritable();
     private static final String prev = ""
     private static final ArrayListWritable<PairOfInts> postings = new ArrayListWritable<>();
@@ -112,8 +112,8 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
     @Override
     publid void cleanup()
     {
-      DF.set(df)
-      context.write(new Text(prev), new PairOfWritables<>(DF, postings))
+      DF.set(df);
+      context.write(new Text(prev), new PairOfWritables<>(DF, postings));
     }
   }
 
@@ -156,7 +156,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
     FileInputFormat.setInputPaths(job, new Path(args.input));
     FileOutputFormat.setOutputPath(job, new Path(args.output));
 
-    job.setMapOutputKeyClass(PairOfStringInt.class);
+    job.setMapOutputKeyClass(Text.class);
     job.setMapOutputValueClass(IntWritable.class);
     job.setOutputKeyClass(Text.class);
     job.setOutputValueClass(PairOfWritables.class);
