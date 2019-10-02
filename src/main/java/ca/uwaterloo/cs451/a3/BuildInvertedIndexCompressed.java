@@ -109,8 +109,8 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 //       DF.set(df);
 //       context.write(new Text(newKey), new PairOfWritables<>(DF, postings));
     }
-    @Override
-    publid void cleanup()
+//     @Override
+    publid void cleanup(Context context)
     {
       DF.set(df);
       context.write(new Text(prev), new PairOfWritables<>(DF, postings));
