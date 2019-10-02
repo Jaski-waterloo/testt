@@ -74,7 +74,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
       for (PairOfObjectInt<String> e : COUNTS) {
 //         String temp = e.getLeftElement() + " " + (int) docno.get();
 //         WORD.set(temp);
-        WORD.set(e.getLeftElement(), (int) docno.get())
+        WORD.set(e.getLeftElement(), (int) docno.get());
         context.write(WORD, new IntWritable(e.getRightElement()));
       }
     }
@@ -161,7 +161,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
     FileInputFormat.setInputPaths(job, new Path(args.input));
     FileOutputFormat.setOutputPath(job, new Path(args.output));
 
-    job.setMapOutputKeyClass(Text.class);
+    job.setMapOutputKeyClass(PairOfStringInt.class);
     job.setMapOutputValueClass(IntWritable.class);
     job.setOutputKeyClass(Text.class);
     job.setOutputValueClass(PairOfWritables.class);
