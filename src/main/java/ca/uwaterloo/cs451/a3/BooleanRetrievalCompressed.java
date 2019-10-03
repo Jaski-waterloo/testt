@@ -61,7 +61,8 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     index = new MapFile.Reader[status.length];
 
     for (int i=0; i < status.length; i++) {
-      if (status[i].getPath().toString().contains("SUCCESS")) continue;
+      if (status[i].getPath().toString().contains("SUCCESS"))
+        continue;
       index[i] = new MapFile.Reader(new Path("" + status[i].getPath()), fs.getConf());
     }
 
@@ -136,27 +137,6 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     return set;
   }
 
-  // added to parse byte array
-  private static PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>> readP(BytesWritable bw) throws IOException{
-    byte[] bytes = bw.getBytes();
-    ByteArrayInputStream pStream = new ByteArrayInputStream(bytes);
-    DataInputStream inStream = new DataInputStream(pStream);
-    ArrayListWritable<PairOfInts> P = new ArrayListWritable<PairOfInts>();
-
-    int docno = 0;
-    int df = WritableUtils.readVInt(inStream);
-
-    for(int i = 0; i < df; i++){
-      int docnoGap = WritableUtils.readVInt(inStream);
-      int tf = WritableUtils.readVInt(inStream);
-      docno += docnoGap;
-      P.add(new PairOfInts(docno, tf));
-    }
-
-    return new PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>>(new IntWritable(df), P);
-
-  }
-
   private ArrayListWritable<PairOfInts> fetchPostings(String term) throws IOException {
     Text key = new Text();
     BytesWritable value = new BytesWritable();
@@ -166,21 +146,23 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     index[fileNo + 1].get(key, value);
 
     byte[] bytes = value.getBytes();
-    ByteArrayInputStream pStream = new ByteArrayInputStream(bytes);
-    DataInputStream inStream = new DataInputStream(pStream);
-    ArrayListWritable<PairOfInts> P = new ArrayListWritable<PairOfInts>();
+    ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+    DataInputStream postingBytes = new DataInputStream(bis);
+    ArrayListWritable<PairOfInts> MyPair = new ArrayListWritable<PairOfInts>();
 
-    int docno = 0;
-    int df = WritableUtils.readVInt(inStream);
+    int docNo = 0;
+    int df = WritableUtils.readVInt(postingBytes);
 
     for(int i = 0; i < df; i++){
-      int docnoGap = WritableUtils.readVInt(inStream);
-      int tf = WritableUtils.readVInt(inStream);
-      docno += docnoGap;
-      P.add(new PairOfInts(docno, tf));
+      int docNoGap = WritableUtils.readVInt(PostingBytes);
+      int termFreq = WritableUtils.readVInt(PostingBytes);
+      docNo += docNoGap;
+      MyPair.add(new PairOfInts(docNo, termFreq));
     }
+    postingBytes.close();
+    bis.close();
 
-    return P;
+    return MyPair;
   }
 
   public String fetchLine(long offset) throws IOException {
