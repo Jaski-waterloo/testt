@@ -123,13 +123,29 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
 
   private ArrayListWritable<PairOfInts> fetchPostings(String term) throws IOException {
     Text key = new Text();
-    PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>> value =
-        new PairOfWritables<>();
+//     PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>> value =
+//         new PairOfWritables<>();
+    ArrayListWritable<PairOfInts> postings = new ArrayListWritable<>();
+    BytesWritable Mybytes = new BytesWritable();
+    
 
     key.set(term);
-    index.get(key, value);
+    Mybytes = index.get(key, Mybytes);
+    ByteArrayInputStream bis = new ByteArrayInputStream();
+    DataInputStream MyPair = new DataInputStream(bos);
+    
+    bis.read(Mybytes.getBytes(), Mybytes.getBytes().length());
+    int DocFreq = WritableUtils.readVInt(MyPair);
+    
+    for(int i=0; i< DocFreq; i++){
+      int DocTerm = WritableUtils.readVInt(MyPair);
+      int TermFreq = WritableUtils.readVInt(MyPair);
+      postings.add(new PairOfInts(DocTerm, TermFreq));
+    }
+    
+    
 
-    return value.getRightElement();
+    return value.getRightElement(postings);
   }
 
   public String fetchLine(long offset) throws IOException {
