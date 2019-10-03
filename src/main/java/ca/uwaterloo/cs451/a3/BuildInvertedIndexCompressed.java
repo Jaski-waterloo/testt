@@ -125,11 +125,10 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 //         context.write(new Text(prev), new BytesWritable(bos.toByteArray()));
         df = 0;
         MyPair.write(bos.toByteArray());
+        bos.reset();
+
 
         context.write(new Text(prev), new BytesWritable(bos2.toByteArray()));
-        bos.reset();
-        MyPair.close();
-        bos2.close();
 //         postings.clear();
         
       }
@@ -162,12 +161,8 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
         MyPair.write(bos.toByteArray());
         
         context.write(new Text(prev), new BytesWritable(bos2.toByteArray()));
-      
-        MyPair.close();
-        bos2.close();
-        
-        postings.close();
-        bos.close();
+      postings.close();
+      bos.close();
                       
     }
   }
