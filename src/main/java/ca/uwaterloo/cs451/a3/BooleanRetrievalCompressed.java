@@ -136,36 +136,38 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     return set;
   }
 
- 
+  // added to parse byte array
+  private static PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>> readP(BytesWritable bw) throws IOException{
+    byte[] bytes = bw.getBytes();
+    ByteArrayInputStream pStream = new ByteArrayInputStream(bytes);
+    DataInputStream inStream = new DataInputStream(pStream);
+    ArrayListWritable<PairOfInts> P = new ArrayListWritable<PairOfInts>();
+
+    int docno = 0;
+    int df = WritableUtils.readVInt(inStream);
+
+    for(int i = 0; i < df; i++){
+      int docnoGap = WritableUtils.readVInt(inStream);
+      int tf = WritableUtils.readVInt(inStream);
+      docno += docnoGap;
+      P.add(new PairOfInts(docno, tf));
+    }
+
+    return new PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>>(new IntWritable(df), P);
+
+  }
+
   private ArrayListWritable<PairOfInts> fetchPostings(String term) throws IOException {
     Text key = new Text();
-//     PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>> value =
-//         new PairOfWritables<>();
-    ArrayListWritable<PairOfInts> postings = new ArrayListWritable<>();
-    BytesWritable Mybytes = new BytesWritable();
-    
+    BytesWritable value = new BytesWritable();
 
     key.set(term);
-    int fileNo = (term.hashCode() & Integer.MAX_VALUE) % numReducers +1;
-    index[fileNo].get(key, Mybytes);
-    ByteArrayInputStream bis = new ByteArrayInputStream(Mybytes.getBytes());
-    DataInputStream MyPair = new DataInputStream(bis);
-    
-//     bis.read(Mybytes.getBytes(), Mybytes.getLength());
-    int DocFreq = WritableUtils.readVInt(MyPair);
-    int DocNo = 0;
-    
-    for(int i=0; i< DocFreq; i++){
-      int DocTerm = WritableUtils.readVInt(MyPair);
-      int TermFreq = WritableUtils.readVInt(MyPair);
-      DocTerm += DocNo;
-      postings.add(new PairOfInts(DocTerm, TermFreq));
-    }
-    
-    
+    int i = (term.hashCode() & Integer.MAX_VALUE) % numReducers;
+    index[i+1].get(key, value);
 
-    return postings;
+    PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>> postings = readP(value);
 
+    return postings.getRightElement();
   }
 
   public String fetchLine(long offset) throws IOException {
