@@ -106,21 +106,21 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 //         DF.set(df);
 //         context.write(new Text(prev), new PairOfWritables<>(DF, postings));
         postings.flush();
-        dos.flush();
+        bos.flush();
         
-        ByteArrayOutputStream bos2 = new ByteArrayOutputStrream(bos.size());
+        ByteArrayOutputStream bos2 = new ByteArrayOutputStream(bos.size());
         DataOutputStream MyPair = new DataOutputStream(bos2);
         
-        WritableUtils.writeVint(Mypair, df);
+        WritableUtils.writeVInt(MyPair, df);
         
-        context.write(new Text(prev), new ByteWritable(Mypair));
+        context.write(new Text(prev), new BytesWritable(MyPair));
         df = 0;
 //         postings.clear();
         
       }
       while (iter2.hasNext()) {
-        WritableUtils.writeVint(postings, docTerm);
-        WritableUtils.writeVint(postings, (int) iter2.next().get());
+        WritableUtils.writeVInt(postings, docTerm);
+        WritableUtils.writeVInt(postings, (int) iter2.next().get());
 //         postings.add(new PairOfInts(docTerm, (int) iter2.next().get()));
         df++;
       }
@@ -137,18 +137,18 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
     {
 //       DF.set(df);
 //       context.write(new Text(prev), new PairOfWritables<>(DF, postings));
-      postings.flush();
-        dos.flush();
+        postings.flush();
+        bos.flush();
         
-        ByteArrayOutputStream bos2 = new ByteArrayOutputStrream(bos.size());
+        ByteArrayOutputStream bos2 = new ByteArrayOutputStream(bos.size());
         DataOutputStream MyPair = new DataOutputStream(bos2);
         
-        WritableUtils.writeVint(Mypair, df);
+        WritableUtils.writeVInt(Mypair, df);
         
-        context.write(new Text(prev), new ByteWritable(Mypair));
+        context.write(new Text(prev), new BytesWritable(MyPair));
         
         postings.close();
-        dos.close();
+        bos.close();
                       
     }
   }
