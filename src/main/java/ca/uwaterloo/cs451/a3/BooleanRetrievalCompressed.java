@@ -135,8 +135,8 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     
 
     key.set(term);
-    Mybytes = index.get(key, Mybytes);
-    ByteArrayInputStream bis = new ByteArrayInputStream(Mybytes);
+    index.get(key, Mybytes);
+    ByteArrayInputStream bis = new ByteArrayInputStream(Mybytes.getBytes());
     DataInputStream MyPair = new DataInputStream(bis);
     
 //     bis.read(Mybytes.getBytes(), Mybytes.getLength());
