@@ -23,6 +23,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -45,6 +46,8 @@ import tl.lin.data.pair.PairOfInts;
 import tl.lin.data.pair.PairOfStringInt;
 import tl.lin.data.pair.PairOfObjectInt;
 import tl.lin.data.pair.PairOfWritables;
+
+import org.apache.hadoop.io.WritableUtils;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -81,29 +84,42 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
   }
 
   private static final class MyReducer extends
-      Reducer<PairOfStringInt, IntWritable, Text, PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>>> {
+      Reducer<PairOfStringInt, IntWritable, Text, BytesWritable> {
     private static final IntWritable DF = new IntWritable();
     private static String prev = "";
-    private static final ArrayListWritable<PairOfInts> postings = new ArrayListWritable<>();
+//     private static final ArrayListWritable<PairOfInts> postings = new ArrayListWritable<>();
     private static int df = 0;
+    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    DataOutputStream postings = new DataOutputStream(bos);
 
     @Override
     public void reduce(PairOfStringInt key, Iterable<IntWritable> values, Context context)
         throws IOException, InterruptedException {
       Iterator<IntWritable> iter2 = values.iterator();
-//       String keyTerm = key.toString().split(" ")[0];
-//       int docTerm = Integer.parseInt(key.toString().split(" ")[1]);
+
       String keyTerm = key.getLeftElement();
       int docTerm = key.getRightElement();
       if(!keyTerm.equals(prev) && !prev.equals(""))
       {
-        DF.set(df);
-        context.write(new Text(prev), new PairOfWritables<>(DF, postings));
+//         DF.set(df);
+//         context.write(new Text(prev), new PairOfWritables<>(DF, postings));
+        postings.flush();
+        dos.flush();
+        
+        ByteArrayOutputStream bos2 = new ByteArrayOutputStrream(bos.size());
+        DataOutputStream MyPair = new DataOutputStream(bos2);
+        
+        WritableUtils.writeVint(Mypair, df);
+        
+        context.write(new Text(prev), new ByteWritable(Mypair));
         df = 0;
-        postings.clear();
+//         postings.clear();
+        
       }
       while (iter2.hasNext()) {
-        postings.add(new PairOfInts(docTerm, (int) iter2.next().get()));
+        WritableUtils.writeVint(postings, docTerm);
+        WritableUtils.writeVint(postings, (int) iter2.next().get());
+//         postings.add(new PairOfInts(docTerm, (int) iter2.next().get()));
         df++;
       }
       prev = keyTerm;
@@ -117,8 +133,21 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
     @Override
     public void cleanup(Context context)throws IOException, InterruptedException
     {
-      DF.set(df);
-      context.write(new Text(prev), new PairOfWritables<>(DF, postings));
+//       DF.set(df);
+//       context.write(new Text(prev), new PairOfWritables<>(DF, postings));
+      postings.flush();
+        dos.flush();
+        
+        ByteArrayOutputStream bos2 = new ByteArrayOutputStrream(bos.size());
+        DataOutputStream MyPair = new DataOutputStream(bos2);
+        
+        WritableUtils.writeVint(Mypair, df);
+        
+        context.write(new Text(prev), new ByteWritable(Mypair));
+        
+        postings.close();
+        dos.close()
+                      
     }
   }
 
@@ -164,7 +193,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
     job.setMapOutputKeyClass(PairOfStringInt.class);
     job.setMapOutputValueClass(IntWritable.class);
     job.setOutputKeyClass(Text.class);
-    job.setOutputValueClass(PairOfWritables.class);
+    job.setOutputValueClass(BytesWritable.class);
     job.setOutputFormatClass(MapFileOutputFormat.class);
 
     job.setMapperClass(MyMapper.class);
