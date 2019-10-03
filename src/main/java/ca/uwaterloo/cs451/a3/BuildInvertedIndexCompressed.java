@@ -157,6 +157,15 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
                       
     }
   }
+  
+  
+  protected static class MyPartitioner extends Partitioner<PairOfStringInt, IntWritable> {
+    @Override
+    public int getPartition(PairOfStringInt key, IntWritable value, int numReduceTasks) {
+      return (key.getLeftElement().hashCode() & Integer.MAX_VALUE) % numReduceTasks;
+    }
+  }
+
 
   private BuildInvertedIndexCompressed() {}
 
@@ -166,6 +175,9 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
 
     @Option(name = "-output", metaVar = "[path]", required = true, usage = "output path")
     String output;
+    
+     @Option(name = "-reducers", metaVar = "[num]", required = false, usage = "number of reducers")
+      public int numReducers = 1;
   }
 
   /**
@@ -192,8 +204,8 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
     job.setJobName(BuildInvertedIndexCompressed.class.getSimpleName());
     job.setJarByClass(BuildInvertedIndexCompressed.class);
 
-    job.setNumReduceTasks(1);
-
+    job.setNumReduceTasks(args.numReducers);
+    
     FileInputFormat.setInputPaths(job, new Path(args.input));
     FileOutputFormat.setOutputPath(job, new Path(args.output));
 
