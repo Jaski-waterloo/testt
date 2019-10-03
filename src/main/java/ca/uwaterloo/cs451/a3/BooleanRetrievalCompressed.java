@@ -59,14 +59,14 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     FileStatus[] status = fs.listStatus(new Path(indexPath));
     numReducers = status.length - 1;
     index = new MapFile.Reader[status.length];
-    for(int i=0;i < numReducers + 1; i++)
-    {
-      if (status[i].getPath().toString().contains("SUCCESS"))
-        continue;
+
+    for (int i=0; i < status.length; i++) {
+      if (status[i].getPath().toString().contains("SUCCESS")) continue;
       index[i] = new MapFile.Reader(new Path("" + status[i].getPath()), fs.getConf());
     }
+
     collection = fs.open(new Path(collectionPath));
-    stack = new Stack<>();
+    stack = new Stack<Set<Integer>>();
   }
 
   private void runQuery(String q) throws IOException {
@@ -98,7 +98,7 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     Set<Integer> s1 = stack.pop();
     Set<Integer> s2 = stack.pop();
 
-    Set<Integer> sn = new TreeSet<>();
+    Set<Integer> sn = new TreeSet<Integer>();
 
     for (int n : s1) {
       if (s2.contains(n)) {
@@ -113,7 +113,7 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     Set<Integer> s1 = stack.pop();
     Set<Integer> s2 = stack.pop();
 
-    Set<Integer> sn = new TreeSet<>();
+    Set<Integer> sn = new TreeSet<Integer>();
 
     for (int n : s1) {
       sn.add(n);
@@ -127,7 +127,7 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
   }
 
   private Set<Integer> fetchDocumentSet(String term) throws IOException {
-    Set<Integer> set = new TreeSet<>();
+    Set<Integer> set = new TreeSet<Integer>();
 
     for (PairOfInts pair : fetchPostings(term)) {
       set.add(pair.getLeftElement());
@@ -136,7 +136,9 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     return set;
   }
 
+ 
   private ArrayListWritable<PairOfInts> fetchPostings(String term) throws IOException {
+    private ArrayListWritable<PairOfInts> fetchPostings(String term) throws IOException {
     Text key = new Text();
 //     PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>> value =
 //         new PairOfWritables<>();
@@ -164,6 +166,7 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     
 
     return postings;
+
   }
 
   public String fetchLine(long offset) throws IOException {
@@ -174,23 +177,22 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     return d.length() > 80 ? d.substring(0, 80) + "..." : d;
   }
 
-  private static final class Args {
+  public static class Args {
     @Option(name = "-index", metaVar = "[path]", required = true, usage = "index path")
-    String index;
+    public String index;
 
     @Option(name = "-collection", metaVar = "[path]", required = true, usage = "collection path")
-    String collection;
+    public String collection;
 
     @Option(name = "-query", metaVar = "[term]", required = true, usage = "query")
-    String query;
+    public String query;
   }
 
   /**
    * Runs this tool.
    */
-  @Override
   public int run(String[] argv) throws Exception {
-    final Args args = new Args();
+    Args args = new Args();
     CmdLineParser parser = new CmdLineParser(args, ParserProperties.defaults().withUsageWidth(100));
 
     try {
@@ -220,9 +222,6 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
 
   /**
    * Dispatches command-line arguments to the tool via the {@code ToolRunner}.
-   *
-   * @param args command-line arguments
-   * @throws Exception if tool encounters an exception
    */
   public static void main(String[] args) throws Exception {
     ToolRunner.run(new BooleanRetrievalCompressed(), args);
