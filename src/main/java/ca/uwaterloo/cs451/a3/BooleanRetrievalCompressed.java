@@ -165,9 +165,22 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     int i = (term.hashCode() & Integer.MAX_VALUE) % numReducers;
     index[i+1].get(key, value);
 
-    PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>> postings = readP(value);
+    byte[] bytes = bw.getBytes();
+    ByteArrayInputStream pStream = new ByteArrayInputStream(bytes);
+    DataInputStream inStream = new DataInputStream(pStream);
+    ArrayListWritable<PairOfInts> P = new ArrayListWritable<PairOfInts>();
 
-    return postings.getRightElement();
+    int docno = 0;
+    int df = WritableUtils.readVInt(inStream);
+
+    for(int i = 0; i < df; i++){
+      int docnoGap = WritableUtils.readVInt(inStream);
+      int tf = WritableUtils.readVInt(inStream);
+      docno += docnoGap;
+      P.add(new PairOfInts(docno, tf));
+    }
+
+    return P;
   }
 
   public String fetchLine(long offset) throws IOException {
