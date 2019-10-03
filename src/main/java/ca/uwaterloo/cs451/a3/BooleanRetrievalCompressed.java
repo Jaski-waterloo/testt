@@ -147,7 +147,7 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
 
     byte[] bytes = value.getBytes();
     ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-    DataInputStream postingBytes = new DataInputStream(bis);
+    DataInputStream PostingBytes = new DataInputStream(bis);
     ArrayListWritable<PairOfInts> MyPair = new ArrayListWritable<PairOfInts>();
 
     int docNo = 0;
