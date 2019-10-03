@@ -84,6 +84,14 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
       }
     }
   }
+  
+  protected static class MyPartitioner extends Partitioner<PairOfStringInt, IntWritable> {
+    @Override
+    public int getPartition(PairOfStringInt key, IntWritable value, int numReduceTasks) {
+      return (key.getLeftElement().hashCode() & Integer.MAX_VALUE) % numReduceTasks;
+    }
+  }
+  
 
   private static final class MyReducer extends
       Reducer<PairOfStringInt, IntWritable, Text, BytesWritable> {
@@ -159,12 +167,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
   }
   
   
-  protected static class MyPartitioner extends Partitioner<PairOfStringInt, IntWritable> {
-    @Override
-    public int getPartition(PairOfStringInt key, IntWritable value, int numReduceTasks) {
-      return (key.getLeftElement().hashCode() & Integer.MAX_VALUE) % numReduceTasks;
-    }
-  }
+  
 
 
   private BuildInvertedIndexCompressed() {}
