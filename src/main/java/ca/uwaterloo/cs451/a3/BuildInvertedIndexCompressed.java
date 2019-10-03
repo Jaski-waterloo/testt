@@ -113,7 +113,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
         
         WritableUtils.writeVInt(MyPair, df);
         
-        context.write(new Text(prev), new BytesWritable(MyPair));
+        context.write(new Text(prev), new BytesWritable(bos.toByteArray()));
         df = 0;
 //         postings.clear();
         
@@ -143,9 +143,9 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
         ByteArrayOutputStream bos2 = new ByteArrayOutputStream(bos.size());
         DataOutputStream MyPair = new DataOutputStream(bos2);
         
-        WritableUtils.writeVInt(Mypair, df);
+        WritableUtils.writeVInt(MyPair, df);
         
-        context.write(new Text(prev), new BytesWritable(MyPair));
+        context.write(new Text(prev), new BytesWritable(bos.toByteArray()));
         
         postings.close();
         bos.close();
