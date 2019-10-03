@@ -151,7 +151,7 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     ArrayListWritable<PairOfInts> MyPair = new ArrayListWritable<PairOfInts>();
 
     int docNo = 0;
-    int df = WritableUtils.readVInt(postingBytes);
+    int df = WritableUtils.readVInt(PostingBytes);
 
     for(int i = 0; i < df; i++){
       int docNoGap = WritableUtils.readVInt(PostingBytes);
@@ -159,7 +159,7 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
       docNo += docNoGap;
       MyPair.add(new PairOfInts(docNo, termFreq));
     }
-    postingBytes.close();
+    PostingBytes.close();
     bis.close();
 
     return MyPair;
