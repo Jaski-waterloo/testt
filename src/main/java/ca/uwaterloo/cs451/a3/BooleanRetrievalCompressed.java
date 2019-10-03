@@ -47,14 +47,23 @@ import java.util.TreeSet;
 import java.io.*;
 
 public class BooleanRetrievalCompressed extends Configured implements Tool {
-  private MapFile.Reader index;
+  private MapFile.Reader[] index;
   private FSDataInputStream collection;
   private Stack<Set<Integer>> stack;
+  private int numReducers;
 
   private BooleanRetrievalCompressed() {}
 
   private void initialize(String indexPath, String collectionPath, FileSystem fs) throws IOException {
-    index = new MapFile.Reader(new Path(indexPath + "/part-r-00000"), fs.getConf());
+    FileStatus[] status = fs.listStatus(new Path(indexPath));
+    numReducers = status.length - 1;
+    index = new MapFile.Reader[status.length];
+    for(int i=0;i < numReducers + 1; i++)
+    {
+      if (status[i].getPath().toString().contains("SUCCESS"))
+        continue;
+      index[i] = new MapFile.Reader(new Path("" + status[i].getPath()), fs.getConf());
+    }
     collection = fs.open(new Path(collectionPath));
     stack = new Stack<>();
   }
@@ -135,16 +144,19 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     
 
     key.set(term);
-    index.get(key, Mybytes);
+    int fileNo = (term.hashCode() & Integer.MAX_VALUE) % numReducers +1;
+    index[fileNo].get(key, Mybytes);
     ByteArrayInputStream bis = new ByteArrayInputStream(Mybytes.getBytes());
     DataInputStream MyPair = new DataInputStream(bis);
     
 //     bis.read(Mybytes.getBytes(), Mybytes.getLength());
     int DocFreq = WritableUtils.readVInt(MyPair);
+    int DocNo = 0;
     
     for(int i=0; i< DocFreq; i++){
       int DocTerm = WritableUtils.readVInt(MyPair);
       int TermFreq = WritableUtils.readVInt(MyPair);
+      DocTerm += DocNo;
       postings.add(new PairOfInts(DocTerm, TermFreq));
     }
     
