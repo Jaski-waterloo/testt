@@ -138,7 +138,6 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
 
  
   private ArrayListWritable<PairOfInts> fetchPostings(String term) throws IOException {
-    private ArrayListWritable<PairOfInts> fetchPostings(String term) throws IOException {
     Text key = new Text();
 //     PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>> value =
 //         new PairOfWritables<>();
