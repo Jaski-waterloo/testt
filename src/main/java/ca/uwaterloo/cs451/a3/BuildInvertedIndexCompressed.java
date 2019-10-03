@@ -146,7 +146,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
         context.write(new Text(prev), new ByteWritable(Mypair));
         
         postings.close();
-        dos.close()
+        dos.close();
                       
     }
   }
