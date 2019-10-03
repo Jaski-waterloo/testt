@@ -162,10 +162,10 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     BytesWritable value = new BytesWritable();
 
     key.set(term);
-    int i = (term.hashCode() & Integer.MAX_VALUE) % numReducers;
-    index[i+1].get(key, value);
+    int fileNo = (term.hashCode() & Integer.MAX_VALUE) % numReducers;
+    index[fileNo + 1].get(key, value);
 
-    byte[] bytes = bw.getBytes();
+    byte[] bytes = value.getBytes();
     ByteArrayInputStream pStream = new ByteArrayInputStream(bytes);
     DataInputStream inStream = new DataInputStream(pStream);
     ArrayListWritable<PairOfInts> P = new ArrayListWritable<PairOfInts>();
