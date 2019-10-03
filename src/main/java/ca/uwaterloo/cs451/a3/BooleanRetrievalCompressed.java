@@ -22,6 +22,7 @@ import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.MapFile;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.util.Tool;
@@ -34,12 +35,16 @@ import tl.lin.data.array.ArrayListWritable;
 import tl.lin.data.pair.PairOfInts;
 import tl.lin.data.pair.PairOfWritables;
 
+import org.apache.hadoop.io.WritableUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
+
+import java.io.*;
 
 public class BooleanRetrievalCompressed extends Configured implements Tool {
   private MapFile.Reader index;
