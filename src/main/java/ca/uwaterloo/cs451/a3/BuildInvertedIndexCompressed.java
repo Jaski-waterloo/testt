@@ -118,7 +118,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
         MyPair.write(bos.toByteArray());
 
         context.write(new Text(prev), new BytesWritable(bos2.toByteArray()));
-        postings.reset();
+        bos.reset();
 //         postings.clear();
         
       }
