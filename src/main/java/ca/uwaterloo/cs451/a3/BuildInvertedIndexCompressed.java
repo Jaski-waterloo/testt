@@ -159,7 +159,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
         WritableUtils.writeVInt(MyPair, df);
         MyPair.write(bos.toByteArray());
         
-        context.write(new Text(prev), new BytesWritable(bos.toByteArray()));
+        context.write(new Text(prev), new BytesWritable(bos2.toByteArray()));
         
         postings.close();
         bos.close();
