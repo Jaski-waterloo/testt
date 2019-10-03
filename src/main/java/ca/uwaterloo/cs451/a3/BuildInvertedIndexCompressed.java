@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
+import io.bespin.java.util.Tokenizer;
 
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -118,8 +118,8 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
         bos.flush();
         ByteArrayOutputStream bos2 = new ByteArrayOutputStream(bos.size());
         DataOutputStream MyPair = new DataOutputStream(bos2);
-        WritableUtils.writeVInt(out, df);
-        out.write(MyPair.toByteArray());
+        WritableUtils.writeVInt(MyPair, df);
+        MyPair.write(bos.toByteArray());
 
         WORD.set(prev);
         context.write(WORD, new BytesWritable(bos2.toByteArray()));
@@ -137,7 +137,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
         WritableUtils.writeVInt(postings, iter.next().get());
         prevDocno = currentDocno;
       }
-      prevTerm = key.getLeftElement();
+      prev = key.getLeftElement();
     }
 
     @Override
@@ -148,7 +148,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
       ByteArrayOutputStream bos2 = new ByteArrayOutputStream(bos.size());
       DataOutputStream MyPair = new DataOutputStream(bos2);
       WritableUtils.writeVInt(MyPair, df);
-      MyPair.write(pStream.toByteArray());
+      MyPair.write(bos.toByteArray());
 
       WORD.set(prev);
       context.write(WORD, new BytesWritable(bos2.toByteArray()));
