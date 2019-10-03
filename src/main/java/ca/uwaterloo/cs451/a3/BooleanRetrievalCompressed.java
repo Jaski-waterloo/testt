@@ -150,7 +150,7 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     
     
 
-    return value.getRightElement(postings);
+    return postings;
   }
 
   public String fetchLine(long offset) throws IOException {
