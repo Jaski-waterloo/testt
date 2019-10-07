@@ -143,13 +143,13 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     DataInputStream inStream = new DataInputStream(pStream);
     ArrayListWritable<PairOfInts> P = new ArrayListWritable<PairOfInts>();
 
-//     int docno = 0;
+    int docNo = 0;
     int df = WritableUtils.readVInt(inStream);
 
     for(int i = 0; i < df; i++){
-      int docno = WritableUtils.readVInt(inStream);
+      int docNoDiff = WritableUtils.readVInt(inStream);
       int tf = WritableUtils.readVInt(inStream);
-//       docno += docnoGap;
+      docNo += docNoDiff;
       P.add(new PairOfInts(docno, tf));
     }
 
@@ -164,10 +164,23 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     key.set(term);
     int i = (term.hashCode() & Integer.MAX_VALUE) % numReducers;
     index[i+1].get(key, value);
+    
+    byte[] MyBytes = value.getBytes();
+    ByteArrayInputStream bis = new ByteArrayInputStream(MyBytes);
+    DataInputStream postings = new DataInputStream(bis);
+    ArrayListWritable<PairOfInts> MyPair = new ArrayListWritable<PairOfInts>();
 
-    PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>> postings = readP(value);
+    int docNo = 0;
+    int df = WritableUtils.readVInt(postings);
 
-    return postings.getRightElement();
+    for(int i = 0; i < df; i++){
+      int docNoDiff = WritableUtils.readVInt(postings);
+      int tf = WritableUtils.readVInt(postings);
+      docNo += docNoDiff;
+      MyPair.add(new PairOfInts(docno, tf));
+    }
+
+    return MyPair
   }
 
   public String fetchLine(long offset) throws IOException {
