@@ -136,27 +136,6 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     return set;
   }
 
-  // added to parse byte array
-  private static PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>> readP(BytesWritable bw) throws IOException{
-    byte[] bytes = bw.getBytes();
-    ByteArrayInputStream pStream = new ByteArrayInputStream(bytes);
-    DataInputStream inStream = new DataInputStream(pStream);
-    ArrayListWritable<PairOfInts> P = new ArrayListWritable<PairOfInts>();
-
-    int docNo = 0;
-    int df = WritableUtils.readVInt(inStream);
-
-    for(int i = 0; i < df; i++){
-      int docNoDiff = WritableUtils.readVInt(inStream);
-      int tf = WritableUtils.readVInt(inStream);
-      docNo += docNoDiff;
-      P.add(new PairOfInts(docno, tf));
-    }
-
-    return new PairOfWritables<IntWritable, ArrayListWritable<PairOfInts>>(new IntWritable(df), P);
-
-  }
-
   private ArrayListWritable<PairOfInts> fetchPostings(String term) throws IOException {
     Text key = new Text();
     BytesWritable value = new BytesWritable();
@@ -173,11 +152,11 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     int docNo = 0;
     int df = WritableUtils.readVInt(postings);
 
-    for(int i = 0; i < df; i++){
+    for(i = 0; i < df; i++){
       int docNoDiff = WritableUtils.readVInt(postings);
       int tf = WritableUtils.readVInt(postings);
       docNo += docNoDiff;
-      MyPair.add(new PairOfInts(docno, tf));
+      MyPair.add(new PairOfInts(docNo, tf));
     }
 
     return MyPair;
