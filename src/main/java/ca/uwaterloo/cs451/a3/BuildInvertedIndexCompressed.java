@@ -104,7 +104,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
     String prev = "";
     //     private static final ArrayListWritable<PairOfInts> postings = new ArrayListWritable<>();
 
-    int prevDocno = 0;
+//     int prevDocno = 0;
     int currentDocno = 0;
         int df = 0;
 
@@ -132,7 +132,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
         bos.reset();
         //         postings.clear();
 
-        prevDocno = 0;
+//         prevDocno = 0;
         df = 0;
       }
 
@@ -140,9 +140,10 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
       while (iter.hasNext()) {
         df++;
         currentDocno = key.getRightElement();
-        WritableUtils.writeVInt(postings, (currentDocno - prevDocno));
+        WritableUtils.writeVInt(postings, (currentDocno));
+//         WritableUtils.writeVInt(postings, (currentDocno - prevDocno));
         WritableUtils.writeVInt(postings, iter.next().get());
-        prevDocno = currentDocno;
+//         prevDocno = currentDocno;
       }
       prev = key.getLeftElement();
        // Sort the postings by docno ascending.
