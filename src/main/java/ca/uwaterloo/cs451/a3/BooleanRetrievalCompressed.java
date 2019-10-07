@@ -143,11 +143,11 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     DataInputStream inStream = new DataInputStream(pStream);
     ArrayListWritable<PairOfInts> P = new ArrayListWritable<PairOfInts>();
 
-    int docno = 0;
+//     int docno = 0;
     int df = WritableUtils.readVInt(inStream);
 
     for(int i = 0; i < df; i++){
-      docno = WritableUtils.readVInt(inStream);
+      int docno = WritableUtils.readVInt(inStream);
       int tf = WritableUtils.readVInt(inStream);
       P.add(new PairOfInts(docno, tf));
     }
