@@ -147,9 +147,8 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     int df = WritableUtils.readVInt(inStream);
 
     for(int i = 0; i < df; i++){
-      int docnoGap = WritableUtils.readVInt(inStream);
+      docno = WritableUtils.readVInt(inStream);
       int tf = WritableUtils.readVInt(inStream);
-      docno += docnoGap;
       P.add(new PairOfInts(docno, tf));
     }
 
