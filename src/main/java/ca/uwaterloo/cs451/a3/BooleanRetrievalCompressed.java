@@ -180,7 +180,7 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
       MyPair.add(new PairOfInts(docno, tf));
     }
 
-    return MyPair
+    return MyPair;
   }
 
   public String fetchLine(long offset) throws IOException {
