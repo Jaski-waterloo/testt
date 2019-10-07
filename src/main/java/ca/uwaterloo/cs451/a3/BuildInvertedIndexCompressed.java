@@ -105,7 +105,7 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
     //     private static final ArrayListWritable<PairOfInts> postings = new ArrayListWritable<>();
 
     int prevDocNo = 0;
-    int curDocno = 0;
+    int curDocNo = 0;
         int df = 0;
 
 
