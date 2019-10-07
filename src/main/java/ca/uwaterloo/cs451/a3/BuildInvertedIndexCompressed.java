@@ -132,18 +132,18 @@ public class BuildInvertedIndexCompressed extends Configured implements Tool {
         bos.reset();
         //         postings.clear();
 
-//         prevDocno = 0;
+        prevDocNo = 0;
         df = 0;
       }
 
       //only loops once
       while (iter.hasNext()) {
         df++;
-        currentDocno = key.getRightElement();
-        WritableUtils.writeVInt(postings, (currentDocno));
-//         WritableUtils.writeVInt(postings, (currentDocno - prevDocno));
+        curDocNo = key.getRightElement();
+//         WritableUtils.writeVInt(postings, (curDocNo));
+        WritableUtils.writeVInt(postings, (curDocNo - prevDocNo));
         WritableUtils.writeVInt(postings, iter.next().get());
-//         prevDocno = currentDocno;
+        prevDocNo = curDocNo;
       }
       prev = key.getLeftElement();
        // Sort the postings by docno ascending.
