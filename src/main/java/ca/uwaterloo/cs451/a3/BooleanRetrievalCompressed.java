@@ -154,9 +154,8 @@ public class BooleanRetrievalCompressed extends Configured implements Tool {
     int df = WritableUtils.readVInt(PostingBytes);
 
     for(int i = 0; i < df; i++){
-      int docNoGap = WritableUtils.readVInt(PostingBytes);
+      int docNo = WritableUtils.readVInt(PostingBytes);
       int termFreq = WritableUtils.readVInt(PostingBytes);
-      docNo += docNoGap;
       MyPair.add(new PairOfInts(docNo, termFreq));
     }
     PostingBytes.close();
