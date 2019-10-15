@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package cs.uwaterloo.ca.cs451.a4;
+package ca.uwaterloo.cs451.a4;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
