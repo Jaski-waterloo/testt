@@ -44,7 +44,7 @@ public class BuildPersonalizedPageRankRecords extends Configured implements Tool
 
     private static class MyMapper extends Mapper<LongWritable, Text, IntWritable, PageRankNode> {
         private static final IntWritable nid = new IntWritable();
-        private static final PageRankNode node = new ();
+        private static final PageRankNode node = new PageRankNode();
 
         @Override
         public void setup(Mapper<LongWritable, Text, IntWritable, PageRankNode>.Context context) {
